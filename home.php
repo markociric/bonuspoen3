@@ -1,38 +1,38 @@
 <?php
     require 'dbBroker.php';
     require 'model/prijava.php';
-
+ 
     //ako korisnik nije logovan, ne može otići direktno na url /home.php
     session_start(); //resume existing session
     if(!isset($_SESSION['user_id'])) {
         header('Location: index.php');
-        exit(); 
+        exit();
     }
-
+ 
     $result = Prijava::getAll($conn);
     // pokazem u php manual sve funkcije za mysqli_result
     // echo json_encode($result->fetch_row());
     // echo json_encode($result->fetch_all());
     // echo json_encode($result->fetch_array());
-
+ 
     if(!$result) {
         echo "Neuspešno izvršavanje upita u bazi. <br>";
         exit(); //funkcija ekvivalentna exit() funkciji
     }
-
-
+   
+ 
 ?>
-
+ 
 <!DOCTYPE html>
 <html lang="en">
-
+ 
 <head>
     <meta charset="UTF-8">
     <title>FON: Prijava kolokvijuma</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/home.css">
 </head>
-
+ 
 <body>
     <div class="container">
         <div class="row md-1">
@@ -45,14 +45,14 @@
             <h1>Prijava Kolokvijuma</h1>
             <p>Fakultet organizacionih nauka</p>
         </div>
-
-
+ 
+ 
         <div class="row mb-4 text-center">
             <div class="col-md-4 col-md-offset-4">
                 <button id="btn-dodaj" type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#myModal">Zakazi kolokvijum</button>
             </div>
         </div>
-
+ 
         <!-- Table section -->
         <div id="pregled" class="panel panel-success">
             <div class="panel-body">
@@ -90,11 +90,11 @@
                             <?php endif; ?>
                         </tbody>
                     </table>
-
+ 
                     <!-- Dugmad za akcije na dnu -->
                     <div class="row">
                         <div class="col-md-6">
-                            <button id="btn-izmeni" type="button" class="btn btn-warning btn-block" data-toggle="modal" data-target="#izmeniModal" disabled>Izmeni</button>
+                            <button id="btn-izmeni" type="button" name="submit" value = "update" class="btn btn-warning btn-block" data-toggle="modal" data-target="#izmeniModal" disabled>Izmeni</button>
                         </div>
                         <div class="col-md-6">
                             <button id="btn-obrisi" type="submit" name="submit" value="Obrisi" class="btn btn-danger btn-block" disabled>Obrisi</button>
@@ -103,7 +103,7 @@
                 </form>
             </div>
         </div>
-
+ 
         <!-- Zakazi Modal -->
         <div class="modal fade" id="myModal" role="dialog">
             <div class="modal-dialog">
@@ -136,7 +136,7 @@
                 </div>
             </div>
         </div>
-
+ 
         <!-- Izmeni Modal -->
         <div class="modal fade" id="izmeniModal" role="dialog">
             <div class="modal-dialog">
@@ -146,7 +146,7 @@
                         <h3 class="modal-title text-center">Izmeni kolokvijum</h3>
                     </div>
                     <div class="modal-body">
-                        <form action="#" method="post" id="izmeniForm">
+                        <form action="obrada.php" method="post" id="izmeniForm">
                             <input id="id_predmeta" type="hidden" name="id_predmeta" readonly>
                             <div class="form-group">
                                 <label>Predmet</label>
@@ -171,33 +171,34 @@
             </div>
         </div>
     </div>
-
+   
+ 
     <!-- Bootstrap and jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
+ 
     <script>
         // Omogućavanje dugmadi kada je selektovan radio button
         $('input[name="id_predmeta"]').on('change', function() {
             $('#btn-izmeni').prop('disabled', false);
             $('#btn-obrisi').prop('disabled', false);
-
+ 
             let selectedRow = $(this).closest('tr');
-
+ 
             let predmet = selectedRow.find('td:eq(0)').text();
             let katedra = selectedRow.find('td:eq(1)').text();
             let sala = selectedRow.find('td:eq(2)').text();
             let datum = selectedRow.find('td:eq(3)').text();
-
-            // let id = $(this).val();
-
-            // $('#id_predmeta').val(id);
-            // $('#predmet').val(predmet);
-            // $('#katedra').val(katedra);
-            // $('#sala').val(sala);
-            // $('#datum').val(datum);
+ 
+             let id = $(this).val();
+ 
+             $('#id_predmeta').val(id);
+             $('#predmet').val(predmet);
+             $('#katedra').val(katedra);
+             $('#sala').val(sala);
+             $('#datum').val(datum);
         });
     </script>
 </body>
-
+ 
 </html>
